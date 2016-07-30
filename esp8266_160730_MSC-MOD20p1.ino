@@ -1,6 +1,8 @@
 #include <Wire.h>
 
 /*
+ * v0.2 2016 Jul. 30
+ *   - fix bug > Device Address was not 7 bit 
  * v0.1 2016 Jul. 30
  *   - add readData()
  *   - add helloWorld()
@@ -8,7 +10,7 @@
  *   - add setup()
  */
 
-#define DEVICE_ADDRESS (0xA4)
+#define DEVICE_ADDRESS (0xA4 >> 1)
 
 void setup() {
   Serial.begin(115200);
