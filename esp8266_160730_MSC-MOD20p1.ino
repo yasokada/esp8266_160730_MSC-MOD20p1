@@ -2,6 +2,8 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
+ * v0.7 2016 Jul. 30
+ *   - MSCMOD20lib: add MSCMOD_InitSD()
  *   - MSCMOD20lib: add receiveAck()
  * v0.6 2016 Jul. 30
  *   - separate MSC-MOD20 functions to external file
@@ -41,12 +43,19 @@ void setup() {
 }
 
 void loop() {  
-  char rcvstr[5] = { 0 };
-  if (MSCMOD_CheckWithAck(rcvstr)) {
-    Serial.print(rcvstr);
+
+  if (MSCMOD_InitSD(/* dstPtr=*/NULL)) {
+    Serial.println("init SD: OK");
   } else {
-    Serial.println("ACK NG");
+    Serial.println("init SD: NG");    
   }
+  
+//  char rcvstr[5] = { 0 };
+//  if (MSCMOD_CheckWithAck(rcvstr)) {
+//    Serial.print(rcvstr);
+//  } else {
+//    Serial.println("ACK NG");
+//  }
   
   delay(3000); // msec
 }

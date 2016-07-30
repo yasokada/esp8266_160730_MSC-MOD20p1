@@ -1,5 +1,7 @@
 
 /*
+ * v0.3 2016 Jul. 30
+ *   - add MSCMOD_InitSD()
  * v0.2 2016 Jul. 30
  *   - add receiveAck()
  * v0.1 2016 Jul. 30
@@ -44,6 +46,11 @@ bool receiveAck(char *dstPtr)
   bool rcvd = readReply(rcvlen, rcvstr);
   if (rcvd && dstPtr != NULL) {
     strncpy(dstPtr, rcvstr, rcvlen);
+
+//#if 1 
+//    Serial.print("rcvd");
+//    Serial.print(rcvstr);
+//#endif    
   } 
 
   return (strncmp(rcvstr, "!00", 3) == 0);
@@ -78,4 +85,12 @@ bool MSCMOD_CheckWithAck(char *dstPtr)
   return receiveAck(dstPtr);
 }
 
+bool MSCMOD_InitSD(char *dstPtr)
+{
+  char sndstr[] = { 'I', 0x20, 'M', ':', 0x0A, 0x00 }; // should end with 0x00 for strlen()
+  int len = strlen(sndstr);
+
+  i2c_sendData(/*size=*/len, sndstr);
+  return receiveAck(dstPtr);
+}
 
