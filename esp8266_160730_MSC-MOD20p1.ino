@@ -25,54 +25,24 @@
  *   - add setup()
  */
 
-#define DEVICE_ADDRESS (0xA4 >> 1)
-
 void setup() {
   Serial.begin(115200);
   Serial.println("");
 
   i2c_setup();
-  readBootBanner();
-}
-
-void loop() {
-  checkWithAck();
-  delay(3000); // msec
-}
-
-bool isData(char code) {
-  return (code != 0x00 && code != 0xFF);
-}
-
-bool readReply(int maxlen, char *dstPtr){
-  char code;
-
-  if (dstPtr == NULL) {
-    return false;
-  }
-    
-  for(int loop = 0; loop < maxlen; loop++) {
-    code = i2c_readCode(DEVICE_ADDRESS);
-    if (isData(code)) {
-      *dstPtr = code;
-      dstPtr++;
-    } else {
-      return false;
-    }
-  }
-  return true;
-}
-
-void checkWithAck()
-{
-  char sndstr[] = { 0x0A };
-  int rcvlen = sizeof("!00");
-  char rcvstr[5] = { 0 }; // longer than "!00" + 1
-
-  i2c_sendData(/*size=*/1, sndstr);
-  bool rcvd = readReply(rcvlen, rcvstr);
-  if (rcvd) {
+  char rcvstr[100] = { 0 };
+  MSCMOD_ReadBootBanner(/*rcvmaxlen=*/100, rcvstr);
+  if (strlen(rcvstr) > 0) {
     Serial.print(rcvstr);
   }
 }
+
+void loop() {  
+  char rcvstr[5] = { 0 };
+  MSCMOD_CheckWithAck(rcvstr);
+  Serial.print(rcvstr);
+  
+  delay(3000); // msec
+}
+
 
