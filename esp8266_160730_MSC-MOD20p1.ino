@@ -1,6 +1,8 @@
 #include <Wire.h>
 
 /*
+ *   - add sendData()
+ *   - rename readAck() to readReply()
  *   - readAck() returns bool type
  * v0.3 2016 Jul. 30
  *   - add readAck()
@@ -58,30 +60,45 @@ char readData() {
   return code;
 }
 
-bool readAck(){
-  int maxlen = sizeof("!00");  
+bool readReply(int maxlen, char *dstPtr){
   char code;
-  bool err = false;
+
+  if (dstPtr == NULL) {
+    return false;
+  }
     
-  for(int loop=0; loop<maxlen; loop++) {
+  for(int loop = 0; loop < maxlen; loop++) {
     code = readData();
     if (isData(code)) {
-      Serial.print(code);
+      *dstPtr = code;
+      dstPtr++;
     } else {
-      err = true;
+      return false;
     }
   }
-  return (err == false);
+  return true;
+}
+
+void sendData(int size, char *srcPtr) {
+  for(int idx = 0; idx < size; idx++) {
+    Wire.beginTransmission(DEVICE_ADDRESS);
+    Wire.write(srcPtr[idx]);
+    Wire.endTransmission(); 
+    delayMicroseconds(30);    
+  }
 }
 
 void helloWorld()
 {
-  Wire.beginTransmission(DEVICE_ADDRESS);
-  Wire.write(0x0A);
-  Wire.endTransmission(); 
-  delayMicroseconds(30);
+  char sndstr[] = { 0x0A };
+  sendData(/*size=*/1, sndstr);
 
-  bool ack;
-  ack = readAck();
+  char rcvstr[20] = { 0 };
+  int maxlen = sizeof("!00");
+  bool rcvd;
+  rcvd = readReply(maxlen, rcvstr);
+  if (rcvd) {
+    Serial.print(rcvstr);
+  }
 }
 
