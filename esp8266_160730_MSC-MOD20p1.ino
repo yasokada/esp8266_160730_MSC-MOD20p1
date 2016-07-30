@@ -1,6 +1,7 @@
 #include <Wire.h>
 
 /*
+ * v0.3 2016 Jul. 30
  *   - add readAck()
  *   - add isData()
  *   - readData() returns char type
