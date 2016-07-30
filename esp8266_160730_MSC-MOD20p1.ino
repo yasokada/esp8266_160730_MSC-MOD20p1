@@ -2,6 +2,7 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
+ * v0.5 2016 Jul. 30
  *   - separate i2c setup/read/write to external file
  *   - rename readData() to readCode()
  *   - readData() takes adr param
