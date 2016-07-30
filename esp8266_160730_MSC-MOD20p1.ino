@@ -1,6 +1,8 @@
 #include <Wire.h>
+#include "esp8266_160730_i2cWrapper.h"
 
 /*
+ *   - separate i2c setup/read/write to external file
  *   - rename readData() to readCode()
  *   - readData() takes adr param
  * v0.4 2016 Jul. 30
@@ -28,9 +30,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("");
 
-  Wire.begin();
-  Wire.setClock(100000L); // 100kHz
-
+  i2c_setup();
   readBootBanner();
 }
 
@@ -43,7 +43,7 @@ void readBootBanner()
 {
   char code;
   for(int loop=0; loop<100; loop++) {
-    code = readCode(DEVICE_ADDRESS);
+    code = i2c_readCode(DEVICE_ADDRESS);
     if (isData(code)) {
       Serial.print(code);
     } else {
@@ -56,14 +56,6 @@ bool isData(char code) {
   return (code != 0x00 && code != 0xFF);
 }
 
-char readCode(char adr) {
-  Wire.requestFrom(adr, /* length= */1);  
-  char code = Wire.read();
-  delayMicroseconds(30);
-
-  return code;
-}
-
 bool readReply(int maxlen, char *dstPtr){
   char code;
 
@@ -72,7 +64,7 @@ bool readReply(int maxlen, char *dstPtr){
   }
     
   for(int loop = 0; loop < maxlen; loop++) {
-    code = readCode(DEVICE_ADDRESS);
+    code = i2c_readCode(DEVICE_ADDRESS);
     if (isData(code)) {
       *dstPtr = code;
       dstPtr++;
@@ -83,22 +75,13 @@ bool readReply(int maxlen, char *dstPtr){
   return true;
 }
 
-void sendData(int size, char *srcPtr) {
-  for(int idx = 0; idx < size; idx++) {
-    Wire.beginTransmission(DEVICE_ADDRESS);
-    Wire.write(srcPtr[idx]);
-    Wire.endTransmission();
-    delayMicroseconds(30);
-  }
-}
-
 void checkWithAck()
 {
   char sndstr[] = { 0x0A };
   int rcvlen = sizeof("!00");
   char rcvstr[5] = { 0 }; // longer than "!00" + 1
 
-  sendData(/*size=*/1, sndstr);
+  i2c_sendData(/*size=*/1, sndstr);
   bool rcvd = readReply(rcvlen, rcvstr);
   if (rcvd) {
     Serial.print(rcvstr);
