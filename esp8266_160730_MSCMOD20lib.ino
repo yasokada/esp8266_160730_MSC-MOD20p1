@@ -1,5 +1,7 @@
 
 /*
+ * v0.2 2016 Jul. 30
+ *   - add receiveAck()
  * v0.1 2016 Jul. 30
  *   - add readReply()
  *   - add isData()
@@ -54,17 +56,25 @@ void MSCMOD_ReadBootBanner(int rcvmaxlen, char *dstPtr)
   }
 }
 
-void MSCMOD_CheckWithAck(char *dstPtr)
+bool receiveAck(char *dstPtr)
 {
-  char sndstr[] = { 0x0A };
   int rcvlen = sizeof("!00");
   char rcvstr[5] = { 0 }; // longer than "!00" + 1
 
-  i2c_sendData(/*size=*/1, sndstr);
   bool rcvd = readReply(rcvlen, rcvstr);
   if (rcvd && dstPtr != NULL) {
     strncpy(dstPtr, rcvstr, rcvlen);
-  }
+  } 
+
+  return (strncmp(rcvstr, "!00", 3) == 0);
+}
+
+bool MSCMOD_CheckWithAck(char *dstPtr)
+{
+  char sndstr[] = { 0x0A };
+  i2c_sendData(/*size=*/1, sndstr);
+
+  return receiveAck(dstPtr);
 }
 
 

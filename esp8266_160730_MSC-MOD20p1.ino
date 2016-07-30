@@ -2,6 +2,7 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
+ *   - MSCMOD20lib: add receiveAck()
  * v0.6 2016 Jul. 30
  *   - separate MSC-MOD20 functions to external file
  * v0.5 2016 Jul. 30
@@ -41,8 +42,11 @@ void setup() {
 
 void loop() {  
   char rcvstr[5] = { 0 };
-  MSCMOD_CheckWithAck(rcvstr);
-  Serial.print(rcvstr);
+  if (MSCMOD_CheckWithAck(rcvstr)) {
+    Serial.print(rcvstr);
+  } else {
+    Serial.println("ACK NG");
+  }
   
   delay(3000); // msec
 }
