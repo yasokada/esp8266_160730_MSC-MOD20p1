@@ -1,6 +1,7 @@
 #include <Wire.h>
 
 /*
+ *   - readAck() returns bool type
  * v0.3 2016 Jul. 30
  *   - add readAck()
  *   - add isData()
@@ -57,16 +58,20 @@ char readData() {
   return code;
 }
 
-void readAck(){
+bool readAck(){
   int maxlen = sizeof("!00");  
   char code;
+  bool err = false;
     
   for(int loop=0; loop<maxlen; loop++) {
     code = readData();
     if (isData(code)) {
       Serial.print(code);
+    } else {
+      err = true;
     }
-  }  
+  }
+  return (err == false);
 }
 
 void helloWorld()
@@ -76,6 +81,7 @@ void helloWorld()
   Wire.endTransmission(); 
   delayMicroseconds(30);
 
-  readAck();
+  bool ack;
+  ack = readAck();
 }
 
