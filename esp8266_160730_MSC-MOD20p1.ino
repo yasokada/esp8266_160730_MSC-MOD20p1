@@ -1,6 +1,7 @@
 #include <Wire.h>
 
 /*
+ *   - rename helloWorld() to checkWithAck()
  *   - add sendData()
  *   - rename readAck() to readReply()
  *   - readAck() returns bool type
@@ -31,7 +32,7 @@ void setup() {
 }
 
 void loop() {
-  helloWorld();
+  checkWithAck();
   delay(3000); // msec
 }
 
@@ -83,20 +84,19 @@ void sendData(int size, char *srcPtr) {
   for(int idx = 0; idx < size; idx++) {
     Wire.beginTransmission(DEVICE_ADDRESS);
     Wire.write(srcPtr[idx]);
-    Wire.endTransmission(); 
-    delayMicroseconds(30);    
+    Wire.endTransmission();
+    delayMicroseconds(30);
   }
 }
 
-void helloWorld()
+void checkWithAck()
 {
   char sndstr[] = { 0x0A };
-  sendData(/*size=*/1, sndstr);
+  int rcvlen = sizeof("!00");
+  char rcvstr[5] = { 0 }; // longer than "!00" + 1
 
-  char rcvstr[20] = { 0 };
-  int maxlen = sizeof("!00");
-  bool rcvd;
-  rcvd = readReply(maxlen, rcvstr);
+  sendData(/*size=*/1, sndstr);
+  bool rcvd = readReply(rcvlen, rcvstr);
   if (rcvd) {
     Serial.print(rcvstr);
   }
