@@ -1,6 +1,10 @@
 #include <Wire.h>
 
 /*
+ *   - add readAck()
+ *   - add isData()
+ *   - readData() returns char type
+ *   - add readBootBanner()
  * v0.2 2016 Jul. 30
  *   - fix bug > Device Address was not 7 bit 
  * v0.1 2016 Jul. 30
@@ -18,6 +22,8 @@ void setup() {
 
   Wire.begin();
   Wire.setClock(100000L); // 100kHz
+
+  readBootBanner();
 }
 
 void loop() {
@@ -25,12 +31,41 @@ void loop() {
   delay(3000); // msec
 }
 
-void readData() {
+void readBootBanner()
+{
+  char code;
+  for(int loop=0; loop<100; loop++) {
+    code = readData();
+    if (isData(code)) {
+      Serial.print(code);
+    } else {
+      break;
+    }
+  }
+}
+
+bool isData(char code) {
+  return (code != 0x00 && code != 0xFF);
+}
+
+char readData() {
   Wire.requestFrom(DEVICE_ADDRESS, /* length= */1);  
   char code = Wire.read();
   delayMicroseconds(30);
 
-  Serial.print(code);
+  return code;
+}
+
+void readAck(){
+  int maxlen = sizeof("!00");  
+  char code;
+    
+  for(int loop=0; loop<maxlen; loop++) {
+    code = readData();
+    if (isData(code)) {
+      Serial.print(code);
+    }
+  }  
 }
 
 void helloWorld()
@@ -40,8 +75,6 @@ void helloWorld()
   Wire.endTransmission(); 
   delayMicroseconds(30);
 
-  for(int loop=0; loop<3; loop++) {
-    readData();
-  }
+  readAck();
 }
 
