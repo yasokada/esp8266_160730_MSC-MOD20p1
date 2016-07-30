@@ -1,6 +1,7 @@
 #include <Wire.h>
 
 /*
+ *   - rename readData() to readCode()
  *   - readData() takes adr param
  * v0.4 2016 Jul. 30
  *   - rename helloWorld() to checkWithAck()
@@ -42,7 +43,7 @@ void readBootBanner()
 {
   char code;
   for(int loop=0; loop<100; loop++) {
-    code = readData(DEVICE_ADDRESS);
+    code = readCode(DEVICE_ADDRESS);
     if (isData(code)) {
       Serial.print(code);
     } else {
@@ -55,7 +56,7 @@ bool isData(char code) {
   return (code != 0x00 && code != 0xFF);
 }
 
-char readData(char adr) {
+char readCode(char adr) {
   Wire.requestFrom(adr, /* length= */1);  
   char code = Wire.read();
   delayMicroseconds(30);
@@ -71,7 +72,7 @@ bool readReply(int maxlen, char *dstPtr){
   }
     
   for(int loop = 0; loop < maxlen; loop++) {
-    code = readData(DEVICE_ADDRESS);
+    code = readCode(DEVICE_ADDRESS);
     if (isData(code)) {
       *dstPtr = code;
       dstPtr++;
