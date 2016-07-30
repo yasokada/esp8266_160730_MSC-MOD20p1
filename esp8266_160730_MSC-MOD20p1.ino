@@ -2,6 +2,7 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
+ *   - add GPIO14 for Analog Discovery 2 trigger
  * v0.7 2016 Jul. 30
  *   - MSCMOD20lib: add MSCMOD_InitSD()
  *   - MSCMOD20lib: add receiveAck()
@@ -30,9 +31,13 @@
  *   - add setup()
  */
 
+static const int kPinTrigger = 14;
+
 void setup() {
   Serial.begin(115200);
   Serial.println("");
+
+  pinMode(kPinTrigger, OUTPUT);
 
   i2c_setup();
   char rcvstr[100] = { 0 };
@@ -42,8 +47,11 @@ void setup() {
   }
 }
 
-void loop() {  
-
+void loop() {
+  digitalWrite(kPinTrigger, 0);
+  delay(2); // msec;
+  digitalWrite(kPinTrigger, 1);
+  
   if (MSCMOD_InitSD(/* dstPtr=*/NULL)) {
     Serial.println("init SD: OK");
   } else {
