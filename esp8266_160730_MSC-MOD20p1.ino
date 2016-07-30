@@ -1,6 +1,7 @@
 #include <Wire.h>
 
 /*
+ * v0.4 2016 Jul. 30
  *   - rename helloWorld() to checkWithAck()
  *   - add sendData()
  *   - rename readAck() to readReply()
