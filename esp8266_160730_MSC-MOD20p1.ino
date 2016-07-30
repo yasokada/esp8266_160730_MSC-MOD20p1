@@ -40,19 +40,6 @@ void loop() {
   delay(3000); // msec
 }
 
-void readBootBanner()
-{
-  char code;
-  for(int loop=0; loop<100; loop++) {
-    code = i2c_readCode(DEVICE_ADDRESS);
-    if (isData(code)) {
-      Serial.print(code);
-    } else {
-      break;
-    }
-  }
-}
-
 bool isData(char code) {
   return (code != 0x00 && code != 0xFF);
 }
