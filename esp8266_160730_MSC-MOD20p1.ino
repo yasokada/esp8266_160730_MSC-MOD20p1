@@ -45,18 +45,27 @@ void setup() {
   if (strlen(rcvstr) > 0) {
     Serial.print(rcvstr);
   }
+
+  Test_SDInit();
+  delay(3000);
+  Test_SDInit();  
+}
+
+void Test_SDInit()
+{
+  if (MSCMOD_InitSD(/* dstPtr=*/NULL)) {
+    Serial.println("init SD: OK");
+  } else {
+    Serial.println("init SD: NG");    
+  }
 }
 
 void loop() {
   digitalWrite(kPinTrigger, 0);
   delay(2); // msec;
   digitalWrite(kPinTrigger, 1);
-  
-  if (MSCMOD_InitSD(/* dstPtr=*/NULL)) {
-    Serial.println("init SD: OK");
-  } else {
-    Serial.println("init SD: NG");    
-  }
+
+  Test_SDInit();
   
 //  char rcvstr[5] = { 0 };
 //  if (MSCMOD_CheckWithAck(rcvstr)) {
