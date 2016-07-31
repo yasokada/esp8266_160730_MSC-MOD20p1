@@ -1,5 +1,7 @@
 
 /*
+ * v0.4 2016 Aug. 01
+ *   - add MSCMOD_CheckVersion()
  * v0.3 2016 Jul. 30
  *   - add MSCMOD_InitSD()
  * v0.2 2016 Jul. 30
@@ -92,5 +94,19 @@ bool MSCMOD_InitSD(char *dstPtr)
 
   i2c_sendData(/*size=*/len, sndstr);
   return receiveAck(dstPtr);
+}
+
+bool MSCMOD_CheckVersion(char *dstPtr)
+{
+  char sndstr[] = { 'V', 0x0A, 0x00 }; // should end with 0x00 for strlen()
+  int len = strlen(sndstr);
+
+  i2c_sendData(/*size=*/len, sndstr);
+  bool rcvd = readReply(/* maxlen=*/10, dstPtr);
+  bool isOK = false;
+  if (rcvd) {
+    isOK = receiveAck(/*dstPtr=*/NULL);
+  }
+  return isOK;
 }
 
