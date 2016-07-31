@@ -2,6 +2,9 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
+ * v0.8 2016 Aug. 01
+ *   - add Test_SDversion()
+ *   - MSCMOD20lib: add MSCMOD_CheckVersion()
  *   - add GPIO14 for Analog Discovery 2 trigger
  * v0.7 2016 Jul. 30
  *   - MSCMOD20lib: add MSCMOD_InitSD()
@@ -44,11 +47,17 @@ void setup() {
   MSCMOD_ReadBootBanner(/*rcvmaxlen=*/100, rcvstr);
   if (strlen(rcvstr) > 0) {
     Serial.print(rcvstr);
-  }
+  }  
 
-  Test_SDInit();
-  delay(3000);
-  Test_SDInit();  
+//  Test_SDversion();
+}
+
+void Test_SDversion()
+{
+  char rcvstr[15] = { 0 };
+  if (MSCMOD_CheckVersion(rcvstr)) {
+    Serial.print(rcvstr);
+  }
 }
 
 void Test_SDInit()
@@ -65,7 +74,9 @@ void loop() {
   delay(2); // msec;
   digitalWrite(kPinTrigger, 1);
 
-  Test_SDInit();
+  Test_SDversion();
+
+//  Test_SDInit();
   
 //  char rcvstr[5] = { 0 };
 //  if (MSCMOD_CheckWithAck(rcvstr)) {
