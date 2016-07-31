@@ -1,6 +1,7 @@
 
 /*
  * v0.4 2016 Aug. 01
+ *   - modify readReply() to accept receiving with shorter length
  *   - add MSCMOD_CheckVersion()
  * v0.3 2016 Jul. 30
  *   - add MSCMOD_InitSD()
@@ -23,6 +24,7 @@ bool isData(char code) {
 
 bool readReply(int maxlen, char *dstPtr){
   char code;
+  bool rcvd = false;
 
   if (dstPtr == NULL) {
     return false;
@@ -33,8 +35,9 @@ bool readReply(int maxlen, char *dstPtr){
     if (isData(code)) {
       *dstPtr = code;
       dstPtr++;
+      rcvd = true;
     } else {
-      return false;
+      return rcvd;
     }
   }
   return true;
@@ -102,11 +105,10 @@ bool MSCMOD_CheckVersion(char *dstPtr)
   int len = strlen(sndstr);
 
   i2c_sendData(/*size=*/len, sndstr);
-  bool rcvd = readReply(/* maxlen=*/10, dstPtr);
-  bool isOK = false;
-  if (rcvd) {
-    isOK = receiveAck(/*dstPtr=*/NULL);
-  }
-  return isOK;
+  bool rcvd = readReply(/* maxlen=*/12, dstPtr);
+
+  Serial.println(dstPtr);
+  
+  return true;
 }
 
