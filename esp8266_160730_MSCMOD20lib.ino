@@ -107,7 +107,7 @@ bool MSCMOD_CheckVersion(char *dstPtr)
   i2c_sendData(/*size=*/len, sndstr);
   bool rcvd = readReply(/* maxlen=*/12, dstPtr);
 
-  Serial.println(dstPtr);
+//  Serial.println(dstPtr);
   
   return true;
 }
