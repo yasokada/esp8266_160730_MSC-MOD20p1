@@ -49,7 +49,11 @@ void setup() {
     Serial.print(rcvstr);
   }  
 
-//  Test_SDversion();
+  // TODO: add function with retry to initialize SD
+  Test_SDInit();
+  delay(200); // msec // x 20, 50, 100
+  Test_SDInit();
+  
 }
 
 void Test_SDversion()
@@ -57,6 +61,8 @@ void Test_SDversion()
   char rcvstr[15] = { 0 };
   if (MSCMOD_CheckVersion(rcvstr)) {
     Serial.print(rcvstr);
+  } else {
+    Serial.println("Check Version: Failed");
   }
 }
 
@@ -74,7 +80,7 @@ void loop() {
   delay(2); // msec;
   digitalWrite(kPinTrigger, 1);
 
-  Test_SDversion();
+//  Test_SDversion();
 
 //  Test_SDInit();
   
