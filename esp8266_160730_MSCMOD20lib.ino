@@ -51,11 +51,6 @@ bool receiveAck(char *dstPtr)
   bool rcvd = readReply(rcvlen, rcvstr);
   if (rcvd && dstPtr != NULL) {
     strncpy(dstPtr, rcvstr, rcvlen);
-
-//#if 1 
-//    Serial.print("rcvd");
-//    Serial.print(rcvstr);
-//#endif    
   } 
 
   return (strncmp(rcvstr, "!00", 3) == 0);
