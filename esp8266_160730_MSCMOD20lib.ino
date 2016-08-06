@@ -68,8 +68,9 @@ void receiveDummy(int rcvlen)
 {
   char rcvstr[20] = { 0 };
 
-//  bool rcvd = readReply(rcvlen, rcvstr);
-  (void)readReply(rcvlen, rcvstr);
+  for(int idx=0; idx<rcvlen; idx++) {
+    (void)readReply(/*rcvlen=*/1, rcvstr);
+  }
 }
 
 //--------------------------------------------------------------
@@ -97,7 +98,6 @@ bool MSCMOD_CheckWithAck(char *dstPtr)
 {
   char sndstr[] = { 0x0A };
   i2c_sendData(/*size=*/1, sndstr);
-
   return receiveAck(dstPtr);
 }
 
@@ -107,7 +107,13 @@ bool MSCMOD_InitSD(char *dstPtr)
   int len = strlen(sndstr);
 
   i2c_sendData(/*size=*/len, sndstr);
+#if 0 // I command
+  bool res = receiveAck(dstPtr);
+  receiveDummy(/*rcvlen=*/3000);
+  return res;
+#else
   return receiveAck(dstPtr);
+#endif  
 }
 
 bool MSCMOD_CheckVersion(char *dstPtr)
