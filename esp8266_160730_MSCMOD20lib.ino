@@ -1,5 +1,7 @@
 
 /*
+ * v0.5 2016 Aug. 05
+ *   - add receiveDummy()
  * v0.4 2016 Aug. 01
  *   - modify readReply() to accept receiving with shorter length
  *   - add MSCMOD_CheckVersion()
@@ -53,7 +55,21 @@ bool receiveAck(char *dstPtr)
     strncpy(dstPtr, rcvstr, rcvlen);
   } 
 
+#if 1 // debug
+  if (dstPtr != NULL) {
+    Serial.println(dstPtr);
+  }
+#endif
+
   return (strncmp(rcvstr, "!00", 3) == 0);
+}
+
+void receiveDummy(int rcvlen)
+{
+  char rcvstr[20] = { 0 };
+
+//  bool rcvd = readReply(rcvlen, rcvstr);
+  (void)readReply(rcvlen, rcvstr);
 }
 
 //--------------------------------------------------------------
