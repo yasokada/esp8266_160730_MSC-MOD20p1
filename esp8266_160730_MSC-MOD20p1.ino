@@ -50,12 +50,12 @@ void setup() {
   }  
 
   // TODO: add function with retry to initialize SD
-  Test_SDInit();
+  Test_SDInit(/*retry=*/0);
   delay(200); // msec // x 20, 50, 100
   digitalWrite(kPinTrigger, 0);
   delay(2); // msec;
   digitalWrite(kPinTrigger, 1);
-  Test_SDInit();  
+  Test_SDInit(/*retry=*/3500);  
   
 }
 
@@ -69,10 +69,10 @@ void Test_SDversion()
   }
 }
 
-void Test_SDInit()
+void Test_SDInit(int retry)
 {
   char rcvstr[20] = { 0 };
-  if (MSCMOD_InitSD(rcvstr)) {
+  if (MSCMOD_InitSD(rcvstr, retry)) {
     Serial.println("init SD: OK");
   } else {
     Serial.println("init SD: NG");    
