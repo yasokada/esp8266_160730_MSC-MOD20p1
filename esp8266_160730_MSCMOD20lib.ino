@@ -55,7 +55,7 @@ bool receiveAck(char *dstPtr)
     strncpy(dstPtr, rcvstr, rcvlen);
   } 
 
-#if 1 // debug
+#if 0 // debug
   if (dstPtr != NULL) {
     Serial.println(dstPtr);
   }
