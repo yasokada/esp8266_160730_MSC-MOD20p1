@@ -2,6 +2,9 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
+ * v0.9 2016 Aug. 09
+ *   - check SDInit timing with SD unmounted (3.3 sec)
+ *     + Test_SDInit() takes [retry:int] arg
  * v0.8 2016 Aug. 01
  *   - add Test_SDversion()
  *   - MSCMOD20lib: add MSCMOD_CheckVersion()

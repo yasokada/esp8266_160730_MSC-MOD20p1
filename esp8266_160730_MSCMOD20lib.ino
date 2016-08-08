@@ -1,5 +1,7 @@
 
 /*
+ * v0.6 2016 Aug. 09
+ *   - MSCMOD_InitSD() takes [retry:int] arg
  * v0.5 2016 Aug. 05
  *   - add receiveDummy()
  * v0.4 2016 Aug. 01
