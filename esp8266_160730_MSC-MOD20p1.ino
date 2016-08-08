@@ -52,6 +52,9 @@ void setup() {
   // TODO: add function with retry to initialize SD
   Test_SDInit();
   delay(200); // msec // x 20, 50, 100
+  digitalWrite(kPinTrigger, 0);
+  delay(2); // msec;
+  digitalWrite(kPinTrigger, 1);
   Test_SDInit();  
   
 }
@@ -79,10 +82,6 @@ void Test_SDInit()
 }
 
 void loop() {
-  digitalWrite(kPinTrigger, 0);
-  delay(2); // msec;
-  digitalWrite(kPinTrigger, 1);
-
 //  Test_SDversion();
 
 //  Test_SDInit();
