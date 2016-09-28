@@ -2,6 +2,8 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
+ * v0.2 2016 Sep. 29
+ *   - add i2c_delay()
  * v0.1 2016 Jul. 30
  *   - add i2c_setup()
  *   - add i2c_readCode()
@@ -30,5 +32,7 @@ void i2c_sendData(int size, char *srcPtr) {
   }
 }
 
-
+void i2c_delay(int msec) {
+  delay(msec);
+}
 
