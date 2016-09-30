@@ -148,14 +148,12 @@ bool MSCMOD_InitSD(char *dstPtr, int retry)
 
   i2c_sendData(/*size=*/len, sndstr);
 
-#if 1 // delay
   bool res = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
+#if 1 // debug
   Serial.println("debug > ");
   Serial.println(dstPtr);
+#endif  
   return res;
-#else
-//  return receiveAck(dstPtr);
-#endif
 }
 
 bool MSCMOD_CheckVersion(char *dstPtr)
@@ -164,11 +162,7 @@ bool MSCMOD_CheckVersion(char *dstPtr)
   int len = strlen(sndstr);
 
   i2c_sendData(/*size=*/len, sndstr);
-#if 1 // delay  
   bool rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
-#else
-  bool rcvd = readReply(/* maxlen=*/12, dstPtr);
-#endif
 
 //  Serial.println(dstPtr);
   
