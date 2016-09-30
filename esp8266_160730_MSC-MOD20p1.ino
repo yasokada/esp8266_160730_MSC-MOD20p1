@@ -54,6 +54,7 @@ void setup() {
     Serial.print(rcvstr);
   }  
 
+#if 0 // comment out for check i2c read function modification
   // TODO: add function with retry to initialize SD
   Test_SDInit(/*retry=*/0);
   delay(200); // msec // x 20, 50, 100
@@ -61,6 +62,7 @@ void setup() {
   delay(2); // msec;
   digitalWrite(kPinTrigger, 1);
   Test_SDInit(/*retry=*/3500);  
+#endif  
   
 }
 
@@ -87,7 +89,7 @@ void Test_SDInit(int retry)
 }
 
 void loop() {
-//  Test_SDversion();
+  Test_SDversion();
 
 //  Test_SDInit();
   
