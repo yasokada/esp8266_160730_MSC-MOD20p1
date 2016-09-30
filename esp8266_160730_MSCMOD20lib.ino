@@ -1,6 +1,8 @@
 
 /*
  * v0.7 2016 Oct. 01
+ *   - MSCMOD_InitSD() uses readReply_delayAndTimeout() instead of readReply()
+ *   - MSCMOD_CheckVersion() uses readReply_delayAndTimeout() instead of readReply()
  *   - readReply_delayAndTimeout() treats timeout
  *   - add readReply_delayAndTimeout()
  * v0.6 2016 Aug. 09
@@ -145,13 +147,15 @@ bool MSCMOD_InitSD(char *dstPtr, int retry)
   int len = strlen(sndstr);
 
   i2c_sendData(/*size=*/len, sndstr);
-#if 1 // I command
-  bool res = receiveAck(dstPtr);
-  receiveDummy(/*rcvlen=*/retry);
+
+#if 1 // delay
+  bool res = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
+  Serial.println("debug > ");
+  Serial.println(dstPtr);
   return res;
 #else
-  return receiveAck(dstPtr);
-#endif  
+//  return receiveAck(dstPtr);
+#endif
 }
 
 bool MSCMOD_CheckVersion(char *dstPtr)
