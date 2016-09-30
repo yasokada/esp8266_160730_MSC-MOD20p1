@@ -1,6 +1,7 @@
 
 /*
  * v0.7 2016 Oct. 01
+ *   - readReply_delayAndTimeout() treats timeout
  *   - add readReply_delayAndTimeout()
  * v0.6 2016 Aug. 09
  *   - MSCMOD_InitSD() takes [retry:int] arg
@@ -54,22 +55,28 @@ bool readReply(int maxlen, char *dstPtr){
 bool readReply_delayAndTimeout(int delay_msec, int timeout_msec, char *dstPtr) {
   char code;
   bool rcvd = false;
+  int eplased_msec = 0; // maximum: 32767
 
   if (dstPtr == NULL) {
     return false;
   }
 
   while(1) { // TODO: 0m > limit with maxloop
+    if (eplased_msec > timeout_msec) {
+      return false;
+    }
     code = i2c_readCode(DEVICE_ADDRESS);
     if (isData(code)) {
       *dstPtr = code;
       dstPtr++;
       rcvd = true;
+      eplased_msec += 1; // TODO: 0m > correct time measurement
     } else {
       if (rcvd) {
         return true;
       }
       i2c_delay(delay_msec);
+      eplased_msec += delay_msec;
     }
   }
   return rcvd;
@@ -153,7 +160,11 @@ bool MSCMOD_CheckVersion(char *dstPtr)
   int len = strlen(sndstr);
 
   i2c_sendData(/*size=*/len, sndstr);
+#if 1 // delay  
+  bool rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
+#else
   bool rcvd = readReply(/* maxlen=*/12, dstPtr);
+#endif
 
 //  Serial.println(dstPtr);
   
