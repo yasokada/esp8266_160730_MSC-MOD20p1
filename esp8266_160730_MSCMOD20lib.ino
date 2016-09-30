@@ -1,5 +1,7 @@
 
 /*
+ * v0.7 2016 Oct. 01
+ *   - add readReply_delayAndTimeout()
  * v0.6 2016 Aug. 09
  *   - MSCMOD_InitSD() takes [retry:int] arg
  * v0.5 2016 Aug. 05
@@ -45,6 +47,32 @@ bool readReply(int maxlen, char *dstPtr){
     }
   }
   return true;
+}
+
+// TOOD: 0m > treat [half data token] and [no data token]
+
+bool readReply_delayAndTimeout(int delay_msec, int timeout_msec, char *dstPtr) {
+  char code;
+  bool rcvd = false;
+
+  if (dstPtr == NULL) {
+    return false;
+  }
+
+  while(1) { // TODO: 0m > limit with maxloop
+    code = i2c_readCode(DEVICE_ADDRESS);
+    if (isData(code)) {
+      *dstPtr = code;
+      dstPtr++;
+      rcvd = true;
+    } else {
+      if (rcvd) {
+        return true;
+      }
+      i2c_delay(delay_msec);
+    }
+  }
+  return rcvd;
 }
 
 bool receiveAck(char *dstPtr)
