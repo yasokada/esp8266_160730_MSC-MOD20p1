@@ -1,5 +1,6 @@
 
 /*
+ *   - add [kCode_terminate]
  * v0.10 2016 Oct. 01
  *   - add MSDMOD_CheckFreeSpace()
  * v0.9 2016 Oct. 01
@@ -30,6 +31,8 @@
  */
 
 #define DEVICE_ADDRESS (0xA4 >> 1)
+
+static const char kCode_terminate = 0x0a;
 
 //--------------------------------------------------------------
 // file scope static 
@@ -143,14 +146,14 @@ void MSCMOD_ReadBootBanner(int rcvmaxlen, char *dstPtr)
 
 bool MSCMOD_CheckWithAck(char *dstPtr)
 {
-  char sndstr[] = { 0x0A };
+  char sndstr[] = { kCode_terminate };
   i2c_sendData(/*size=*/1, sndstr);
   return receiveAck(dstPtr);
 }
 
 bool MSCMOD_InitSD(char *dstPtr, int retry)
 {
-  char sndstr[] = { 'I', 0x20, 'M', ':', 0x0A, 0x00 }; // should end with 0x00 for strlen()
+  char sndstr[] = { 'I', 0x20, 'M', ':', kCode_terminate, 0x00 }; // should end with 0x00 for strlen()
   int len = strlen(sndstr);
 
   i2c_sendData(/*size=*/len, sndstr);
@@ -165,7 +168,7 @@ bool MSCMOD_InitSD(char *dstPtr, int retry)
 
 bool MSCMOD_CheckVersion(char *dstPtr)
 {
-  char sndstr[] = { 'V', 0x0A, 0x00 }; // should end with 0x00 for strlen()
+  char sndstr[] = { 'V', kCode_terminate, 0x00 }; // should end with 0x00 for strlen()
   int len = strlen(sndstr);
 
   i2c_sendData(/*size=*/len, sndstr);
@@ -178,7 +181,7 @@ bool MSCMOD_CheckVersion(char *dstPtr)
 
 bool MSDMOD_CheckFreeSpace(char *dstPtr)
 {
-  char sndstr[] = { 'K', 0x20, 'M', ':', 0x0A, 0x00 }; // should end with 0x00 for strlen()
+  char sndstr[] = { 'K', 0x20, 'M', ':', kCode_terminate, 0x00 }; // should end with 0x00 for strlen()
   char rcvstr[10];
   int len = strlen(sndstr);
 
