@@ -1,5 +1,7 @@
 
 /*
+ * v0.8 2016 Oct. 01
+ *   - MSCMOD_InitSD() returns error when ack is not received
  *   - add isAck()
  * v0.7 2016 Oct. 01 > add timeout for read i2 char
  *   - MSCMOD_InitSD() uses readReply_delayAndTimeout() instead of readReply()
@@ -154,12 +156,12 @@ bool MSCMOD_InitSD(char *dstPtr, int retry)
 
   i2c_sendData(/*size=*/len, sndstr);
 
-  bool res = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/5000, dstPtr);
-#if 1 // debug
-  Serial.println("debug > ");
-  Serial.println(dstPtr);
-#endif  
-  return res;
+  bool rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/5000, dstPtr);
+  if (rcvd) {
+    return isAck(dstPtr);
+  } else {
+    return false;
+  }
 }
 
 bool MSCMOD_CheckVersion(char *dstPtr)
