@@ -2,7 +2,9 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
- *   - 
+ * v0.11 2016 Oct. 01
+ *   - MSCMOD20lib: v0.8 > MSCMOD_InitSD() returns error when ack is not received
+ *   - MSCMOD20lib: v0.7 > add timeout for read i2 char
  * v0.10 2016 Sep. 29
  *   - i2cwrapper: v0.2 > add i2c_delay()
  * v0.9 2016 Aug. 09
