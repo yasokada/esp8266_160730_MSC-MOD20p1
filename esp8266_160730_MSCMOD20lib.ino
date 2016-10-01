@@ -103,12 +103,6 @@ bool receiveAck(char *dstPtr)
     strncpy(dstPtr, rcvstr, rcvlen);
   } 
 
-#if 0 // debug
-  if (dstPtr != NULL) {
-    Serial.println(dstPtr);
-  }
-#endif
-
   return (strncmp(rcvstr, "!00", 3) == 0);
 }
 
