@@ -1,6 +1,7 @@
 
 /*
- * v0.7 2016 Oct. 01
+ *   - add isAck()
+ * v0.7 2016 Oct. 01 > add timeout for read i2 char
  *   - MSCMOD_InitSD() uses readReply_delayAndTimeout() instead of readReply()
  *   - MSCMOD_CheckVersion() uses readReply_delayAndTimeout() instead of readReply()
  *   - readReply_delayAndTimeout() treats timeout
@@ -84,6 +85,7 @@ bool readReply_delayAndTimeout(int delay_msec, int timeout_msec, char *dstPtr) {
   return rcvd;
 }
 
+// TODO: 0m > remove or rewrite using readReply_delayAndTimeout()
 bool receiveAck(char *dstPtr)
 {
   int rcvlen = sizeof("!00");
@@ -101,6 +103,10 @@ bool receiveAck(char *dstPtr)
 #endif
 
   return (strncmp(rcvstr, "!00", 3) == 0);
+}
+
+bool isAck(char *srcPtr) {
+  return (strncmp(srcPtr, "!00", 3) == 0);  
 }
 
 void receiveDummy(int rcvlen)
@@ -148,7 +154,7 @@ bool MSCMOD_InitSD(char *dstPtr, int retry)
 
   i2c_sendData(/*size=*/len, sndstr);
 
-  bool res = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
+  bool res = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/5000, dstPtr);
 #if 1 // debug
   Serial.println("debug > ");
   Serial.println(dstPtr);
