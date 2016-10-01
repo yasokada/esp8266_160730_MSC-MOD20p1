@@ -2,6 +2,9 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
+ *   - add Test_SDfreeSpace()
+ *   - MSCMOD20lib: v0.10 > add MSDMOD_CheckFreeSpace()
+ *   - MSCMOD20lib: v0.9 > fix typo
  * v0.11 2016 Oct. 01
  *   - MSCMOD20lib: v0.8 > MSCMOD_InitSD() returns error when ack is not received
  *   - MSCMOD20lib: v0.7 > add timeout for read i2 char
@@ -91,10 +94,22 @@ void Test_SDInit(int retry)
   Serial.println(rcvstr);
 }
 
+void Test_SDfreeSpace()
+{
+  char rcvstr[30] = { 0 };
+  if ( MSDMOD_CheckFreeSpace(rcvstr) ) {
+    Serial.println("SD free space:");
+    Serial.println(rcvstr);
+  } else {
+    Serial.println("SD free space: NG");    
+  }
+}
+
 void loop() {
   Test_SDversion();
 
   Test_SDInit(/*retry=*/0);
+  Test_SDfreeSpace();
   
 //  char rcvstr[5] = { 0 };
 //  if (MSCMOD_CheckWithAck(rcvstr)) {
