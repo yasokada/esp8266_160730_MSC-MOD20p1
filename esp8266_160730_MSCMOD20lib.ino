@@ -1,5 +1,7 @@
 
 /*
+ * v0.10 2016 Oct. 01
+ *   - add MSDMOD_CheckFreeSpace()
  * v0.9 2016 Oct. 01
  *   - fix typo > [eplased_msec] to [elapsed_msec]
  * v0.8 2016 Oct. 01
@@ -58,7 +60,8 @@ bool readReply(int maxlen, char *dstPtr){
 }
 
 // TOOD: 0m > treat [half data token] and [no data token]
-
+// TODO: 0m > add length for dstPtr to avoid overflow
+//
 bool readReply_delayAndTimeout(int delay_msec, int timeout_msec, char *dstPtr) {
   char code;
   bool rcvd = false;
@@ -178,4 +181,57 @@ bool MSCMOD_CheckVersion(char *dstPtr)
   
   return true;
 }
+
+bool MSDMOD_CheckFreeSpace(char *dstPtr)
+{
+  char sndstr[] = { 'K', 0x20, 'M', ':', 0x0A, 0x00 }; // should end with 0x00 for strlen()
+  char rcvstr[10];
+  int len = strlen(sndstr);
+
+  i2c_sendData(/*size=*/len, sndstr);
+  bool rcvd;
+
+  // 1. receive ACK
+  rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, rcvstr);
+  Serial.print(F("1:"));
+  Serial.print(strlen(rcvstr));
+  Serial.print(F(","));
+  Serial.println(rcvstr);
+  if (rcvd == false) {
+    return false;  
+  }
+  if (isAck(rcvstr) == false) {
+    return false;
+  }
+
+  // 2. receive free space bytes
+  rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
+  Serial.print(F("2:"));
+  Serial.print(strlen(dstPtr));
+  Serial.print(F(","));
+  Serial.println(dstPtr);
+  if (rcvd == false) {
+    return false;  
+  }
+
+  // 3. receive ACK
+  rcvstr[0] = 0x00;
+  rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, rcvstr);
+  Serial.print(F("3:"));
+  Serial.print(strlen(rcvstr));
+  Serial.print(F(","));
+  Serial.println(rcvstr);
+  if (rcvd == false) {
+    Serial.println(F("3a:"));
+    return false;  
+  }
+  if (isAck(rcvstr) == false) {
+    Serial.println(F("3b:"));
+    return false;
+  }
+  
+  Serial.println(F("3c:"));
+  return true;
+}
+ 
 
