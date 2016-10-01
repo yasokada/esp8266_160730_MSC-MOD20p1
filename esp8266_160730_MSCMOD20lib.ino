@@ -1,5 +1,7 @@
 
 /*
+ * v0.9 2016 Oct. 01
+ *   - fix typo > [eplased_msec] to [elapsed_msec]
  * v0.8 2016 Oct. 01
  *   - MSCMOD_InitSD() returns error when ack is not received
  *   - add isAck()
@@ -60,14 +62,14 @@ bool readReply(int maxlen, char *dstPtr){
 bool readReply_delayAndTimeout(int delay_msec, int timeout_msec, char *dstPtr) {
   char code;
   bool rcvd = false;
-  int eplased_msec = 0; // maximum: 32767
+  int elapsed_msec = 0; // maximum: 32767
 
   if (dstPtr == NULL) {
     return false;
   }
 
   while(1) { // TODO: 0m > limit with maxloop
-    if (eplased_msec > timeout_msec) {
+    if (elapsed_msec > timeout_msec) {
       return false;
     }
     code = i2c_readCode(DEVICE_ADDRESS);
@@ -75,13 +77,13 @@ bool readReply_delayAndTimeout(int delay_msec, int timeout_msec, char *dstPtr) {
       *dstPtr = code;
       dstPtr++;
       rcvd = true;
-      eplased_msec += 1; // TODO: 0m > correct time measurement
+      elapsed_msec += 1; // TODO: 0m > correct time measurement
     } else {
       if (rcvd) {
         return true;
       }
       i2c_delay(delay_msec);
-      eplased_msec += delay_msec;
+      elapsed_msec += delay_msec;
     }
   }
   return rcvd;
