@@ -84,11 +84,6 @@ bool readReply_delayAndTimeout(int delay_msec, int timeout_msec, char *dstPtr) {
       return false;
     }
     code = i2c_readCode(DEVICE_ADDRESS);
-#if 0 // terminate
-    if (code == kCode_terminate) {
-      return rcvd;
-    }
-#endif
     if (isData(code)) {
       *dstPtr = code;
       dstPtr++;
