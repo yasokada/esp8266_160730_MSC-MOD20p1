@@ -2,6 +2,9 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /*
+ * v0.12 2016 OCt. 02
+ *   - MSCMOD20lib: v0.13
+ *   - MSCMOD20lib: v0.11, v0.12 > add character tools
  *   - add Test_SDfreeSpace()
  *   - MSCMOD20lib: v0.10 > add MSDMOD_CheckFreeSpace()
  *   - MSCMOD20lib: v0.9 > fix typo
