@@ -129,6 +129,8 @@ void Test_SDopenWriteClose()
   char rcvstr[50] = { 0 };
 
   if (MSCMOD_OpenFile(filename, rcvstr)) {
+    Serial.print(F("FileOpen "));
+    Serial.println(filename);
     Serial.println(rcvstr);
   } else {
     Serial.println(F("OpenFile: Fail"));
@@ -136,6 +138,7 @@ void Test_SDopenWriteClose()
   //
   rcvstr[0] = 0x00;
   if (MSCMOD_CloseFile(rcvstr)) {
+    Serial.print(F("FileClose: "));
     Serial.println(rcvstr);
   } else {
     Serial.println(F("CloseFile: Fail"));    
