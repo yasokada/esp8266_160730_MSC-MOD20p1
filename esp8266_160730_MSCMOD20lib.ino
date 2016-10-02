@@ -1,6 +1,7 @@
 
 /*
  * v0.12 add character tools
+ *   - add CHR_getStringIndexOf()
  *   - add CHR_getTerminatorCount()
  * v0.11
  *   - add [kCode_terminate]
@@ -148,6 +149,34 @@ int CHR_getTerminatorCount(char *srcPtr)
   return cnt;
 }
 
+bool CHR_getStringIndexOf(char *srcPtr, int idx, int maxlen, char *dstPtr)
+{
+  if (srcPtr == NULL || dstPtr == NULL) {
+    return false;
+  }
+
+  int pos = 0;
+  int cntTrmt = 0; // count of terminator
+
+  while(*srcPtr != 0x00) {
+    if (cntTrmt == idx) {
+      *dstPtr = *srcPtr;
+      dstPtr++;
+      pos++;
+      if (pos >= maxlen) {
+        break;
+      }
+    }
+    if (*srcPtr == kCode_terminate) {
+      cntTrmt++;
+    }
+    srcPtr++;
+  }
+
+  *dstPtr = 0x00;
+  return (pos > 0);
+}
+
 //--------------------------------------------------------------
 // public function
 
@@ -201,11 +230,25 @@ bool MSCMOD_CheckVersion(char *dstPtr)
 
   // TOOD: 0m > check ACK
 
-  Serial.print(F("rcvd:"));
-  Serial.println(dstPtr);
-  Serial.print(F("---"));
-  Serial.println(CHR_getTerminatorCount(dstPtr));
-  Serial.println(F("---"));
+  // Serial.print(F("rcvd:"));
+  // Serial.println(dstPtr);
+  // Serial.print(F("---"));
+  // Serial.println(CHR_getTerminatorCount(dstPtr));
+  // Serial.println(F("---"));
+
+//bool CHR_getStringIndexOf(char *srcPtr, int idx, int maxlen, char *dstPtr)
+
+#if 1
+  char wrk[20+1] = { 0 };
+  if (CHR_getStringIndexOf(dstPtr,/*idx=*/0, /*maxlen=*/20, wrk)) {
+    Serial.print("debug243:");
+    Serial.println(wrk);
+  }
+  if (CHR_getStringIndexOf(dstPtr,/*idx=*/1, /*maxlen=*/20, wrk)) {
+    Serial.print("debug247:");
+    Serial.println(wrk);
+  }
+#endif  
   
   return true;
 }
