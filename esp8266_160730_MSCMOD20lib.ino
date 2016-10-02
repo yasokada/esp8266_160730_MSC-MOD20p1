@@ -1,5 +1,6 @@
 
 /*
+ *   - add MSCMOD_CloseFile()
  *   - add MSCMOD_OpenFile()
  *   - add XXX_MSCMOD_testWriteAndRead()
  * v0.13 
@@ -343,7 +344,7 @@ bool MSCMOD_OpenFile(char *fileName, char *dstPtr)
 
   strcpy(sndstr, "O 1R>M:\\");
   strcat(sndstr, fileName);
-  strcat(sndstr, kCode_terminate);
+  strcat(sndstr, (char *)kCode_terminate);
   strcat(sndstr, 0x00);
 
 #if 1 // debug
@@ -363,6 +364,23 @@ bool MSCMOD_OpenFile(char *fileName, char *dstPtr)
   }
 
   Serial.println(dstPtr);
+  return true;
 } 
 
+bool MSCMOD_CloseFile(char *dstPtr)
+{
+  // - Example of [return characters]
+  // !00<0x0A><0x00>
 
+  char sndstr[] = { 'C', 0x20, '1', kCode_terminate, 0x00 }; // should end with 0x00 for strlen()
+  int len = strlen(sndstr);
+
+  i2c_sendData(/*size=*/len, sndstr);
+
+  bool rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/5000, dstPtr);
+  if (rcvd) {
+    return isAck(dstPtr);
+  } else {
+    return false;
+  }
+}
