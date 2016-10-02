@@ -1,7 +1,8 @@
 #include <Wire.h>
 #include "esp8266_160730_i2cWrapper.h"
 
-/*
+/* 
+ *   - add Test_SDtestReadWrite()
  * v0.12 2016 OCt. 02
  *   - MSCMOD20lib: v0.13
  *   - MSCMOD20lib: v0.11, v0.12 > add character tools
@@ -108,12 +109,26 @@ void Test_SDfreeSpace()
   }
 }
 
+void Test_SDtestReadWrite()
+{
+  static bool started = false;
+  char rcvstr[50] = { 0 };
+  if (started == false) {
+    MSCMOD_testWriteAndRead(rcvstr);
+    started = true;
+  } else {
+    
+  }
+}
+
 void loop() {
   Test_SDversion();
 
   Test_SDInit(/*retry=*/0);
   Test_SDfreeSpace();
-  
+
+  Test_SDtestReadWrite();
+
 //  char rcvstr[5] = { 0 };
 //  if (MSCMOD_CheckWithAck(rcvstr)) {
 //    Serial.print(rcvstr);
