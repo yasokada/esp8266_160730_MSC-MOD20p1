@@ -1,5 +1,6 @@
 
 /*
+ *   - add XXX_MSCMOD_testWriteAndRead()
  * v0.13 
  *   - MSDMOD_CheckFreeSpace() checks ACK
  *   - MSCMOD_CheckVersion() checks ACK
@@ -277,10 +278,6 @@ bool MSDMOD_CheckFreeSpace(char *dstPtr)
 
   // 2. receive free space bytes
   rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
-  Serial.print(F("2:"));
-  Serial.print(strlen(dstPtr));
-  Serial.print(F(","));
-  Serial.println(dstPtr);
   if (rcvd == false) {
     return false;  
   }
@@ -302,6 +299,36 @@ bool MSDMOD_CheckFreeSpace(char *dstPtr)
   strcpy(dstPtr, wrk);
   
   return true;
+}
+
+bool XXX_MSCMOD_testWriteAndRead(char *dstPtr)
+{
+  /*
+  With ESP8266, following process will cause watchdog reset
+  because it takes more than 5 seconds to receceive the reply.
+  So, the following process is not implemented correctly.
+  */
+
+  // - Example of [return characters]
+  // !00<0x0A><0x00>
+  // $000000006E170000<0x0A>
+  // !00<0x0A><0x00>
+
+  // 400: 1kB
+  char sndstr[] = { 'E', 0x20, 'M', ':', '>', '4', '0', '0', kCode_terminate, 0x00 }; // `should end with 0x00 for strlen()
+  char rcvstr[30];
+  int len = strlen(sndstr);
+
+  i2c_sendData(/*size=*/len, sndstr);
+  bool rcvd;
+
+  // 2. receive process time
+  rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
+  if (rcvd == false) {
+    return false;  
+  }
+
+  Serial.println(dstPtr);
 }
  
 
