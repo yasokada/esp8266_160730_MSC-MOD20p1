@@ -1,5 +1,8 @@
 
 /*
+ * v0.12 add character tools
+ *   - add CHR_getTerminatorCount()
+ * v0.11
  *   - add [kCode_terminate]
  * v0.10 2016 Oct. 01
  *   - add MSDMOD_CheckFreeSpace()
@@ -79,6 +82,11 @@ bool readReply_delayAndTimeout(int delay_msec, int timeout_msec, char *dstPtr) {
       return false;
     }
     code = i2c_readCode(DEVICE_ADDRESS);
+#if 0 // terminate
+    if (code == kCode_terminate) {
+      return rcvd;
+    }
+#endif
     if (isData(code)) {
       *dstPtr = code;
       dstPtr++;
@@ -121,6 +129,23 @@ void receiveDummy(int rcvlen)
     delay(1); // msec
     (void)readReply(/*rcvlen=*/1, rcvstr);
   }
+}
+
+int CHR_getTerminatorCount(char *srcPtr) 
+{
+  if (srcPtr == NULL) {
+    return 0;
+  }
+
+  int cnt = 0;
+  while(*srcPtr != 0x00) {
+    if (*srcPtr == kCode_terminate) {
+      cnt++;
+    }
+    srcPtr++;
+  }
+
+  return cnt;
 }
 
 //--------------------------------------------------------------
@@ -174,7 +199,13 @@ bool MSCMOD_CheckVersion(char *dstPtr)
   i2c_sendData(/*size=*/len, sndstr);
   bool rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
 
-//  Serial.println(dstPtr);
+  // TOOD: 0m > check ACK
+
+  Serial.print(F("rcvd:"));
+  Serial.println(dstPtr);
+  Serial.print(F("---"));
+  Serial.println(CHR_getTerminatorCount(dstPtr));
+  Serial.println(F("---"));
   
   return true;
 }
