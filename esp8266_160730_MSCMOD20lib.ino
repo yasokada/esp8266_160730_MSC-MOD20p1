@@ -1,5 +1,6 @@
 
 /*
+ *   - MSCMOD_CheckVersion() checks ACK
  * v0.12 add character tools
  *   - add CHR_getStringIndexOf()
  *   - add CHR_getTerminatorCount()
@@ -222,34 +223,33 @@ bool MSCMOD_InitSD(char *dstPtr, int retry)
 
 bool MSCMOD_CheckVersion(char *dstPtr)
 {
+  // - Example of [return characters]
+  // v2.0.0<0x0A>
+  // !00<0x0A>
+
   char sndstr[] = { 'V', kCode_terminate, 0x00 }; // should end with 0x00 for strlen()
   int len = strlen(sndstr);
 
+  // 1. i2c read
   i2c_sendData(/*size=*/len, sndstr);
   bool rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
 
-  // TOOD: 0m > check ACK
-
-  // Serial.print(F("rcvd:"));
-  // Serial.println(dstPtr);
-  // Serial.print(F("---"));
-  // Serial.println(CHR_getTerminatorCount(dstPtr));
-  // Serial.println(F("---"));
-
-//bool CHR_getStringIndexOf(char *srcPtr, int idx, int maxlen, char *dstPtr)
-
-#if 1
   char wrk[20+1] = { 0 };
-  if (CHR_getStringIndexOf(dstPtr,/*idx=*/0, /*maxlen=*/20, wrk)) {
-    Serial.print("debug243:");
-    Serial.println(wrk);
+  bool res;
+  bool ack = false;
+  // 2a. check ACK
+  res = CHR_getStringIndexOf(dstPtr,/*idx=*/1, /*maxlen=*/20, wrk);
+  ack = isAck(wrk);
+  if (res == false || ack == false) {
+    return false;
   }
-  if (CHR_getStringIndexOf(dstPtr,/*idx=*/1, /*maxlen=*/20, wrk)) {
-    Serial.print("debug247:");
-    Serial.println(wrk);
+  // 2b. read version info
+  res = CHR_getStringIndexOf(dstPtr,/*idx=*/0, /*maxlen=*/20, wrk);
+  if (res == false) {
+    return false;
   }
-#endif  
-  
+  strcpy(dstPtr, wrk);
+
   return true;
 }
 
