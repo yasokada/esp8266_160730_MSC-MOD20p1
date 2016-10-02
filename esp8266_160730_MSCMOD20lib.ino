@@ -340,18 +340,13 @@ bool MSCMOD_OpenFile(char *fileName, char *dstPtr)
 
 //  char sndstr[] = { 'O', 0x20, '1', 'R', '>', 'M', ':', '0', kCode_terminate, 0x00 }; // `should end with 0x00 for strlen()
 
-  char sndstr[20];
+  char sndstr[30];
 
-  strcpy(sndstr, "O 1R>M:\\");
+  strcpy(sndstr, "O 1W>M:\\");
   strcat(sndstr, fileName);
-  strcat(sndstr, (char *)kCode_terminate);
-  strcat(sndstr, 0x00);
-
-#if 1 // debug
-  Serial.println(sndstr);
-#endif
-
   int len = strlen(sndstr);
+  sndstr[len++] = kCode_terminate;
+  sndstr[len++] = 0x00;
 
   i2c_sendData(/*size=*/len, sndstr);
 
@@ -363,7 +358,6 @@ bool MSCMOD_OpenFile(char *fileName, char *dstPtr)
     return false;  
   }
 
-  Serial.println(dstPtr);
   return true;
 } 
 
