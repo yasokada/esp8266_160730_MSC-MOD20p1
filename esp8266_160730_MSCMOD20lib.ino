@@ -1,5 +1,7 @@
 
 /*
+ * v0.13 
+ *   - MSDMOD_CheckFreeSpace() checks ACK
  *   - MSCMOD_CheckVersion() checks ACK
  * v0.12 add character tools
  *   - add CHR_getStringIndexOf()
@@ -250,6 +252,11 @@ bool MSCMOD_CheckVersion(char *dstPtr)
 
 bool MSDMOD_CheckFreeSpace(char *dstPtr)
 {
+  // - Example of [return characters]
+  // !00<0x0A><0x00>
+  // $000000006E170000<0x0A>
+  // !00<0x0A><0x00>
+
   char sndstr[] = { 'K', 0x20, 'M', ':', kCode_terminate, 0x00 }; // should end with 0x00 for strlen()
   char rcvstr[10];
   int len = strlen(sndstr);
@@ -259,10 +266,6 @@ bool MSDMOD_CheckFreeSpace(char *dstPtr)
 
   // 1. receive ACK
   rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, rcvstr);
-  Serial.print(F("1:"));
-  Serial.print(strlen(rcvstr));
-  Serial.print(F(","));
-  Serial.println(rcvstr);
   if (rcvd == false) {
     return false;  
   }
@@ -280,23 +283,22 @@ bool MSDMOD_CheckFreeSpace(char *dstPtr)
     return false;  
   }
 
-  // 3. receive ACK
-  rcvstr[0] = 0x00;
-  rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, rcvstr);
-  Serial.print(F("3:"));
-  Serial.print(strlen(rcvstr));
-  Serial.print(F(","));
-  Serial.println(rcvstr);
-  if (rcvd == false) {
-    Serial.println(F("3a:"));
-    return false;  
-  }
-  if (isAck(rcvstr) == false) {
-    Serial.println(F("3b:"));
+  char wrk[20+1] = { 0 };
+  bool res;
+  bool ack = false;
+  // 2a. check ACK
+  res = CHR_getStringIndexOf(dstPtr,/*idx=*/1, /*maxlen=*/20, wrk);
+  ack = isAck(wrk);
+  if (res == false || ack == false) {
     return false;
   }
+  // 2b. read free space info
+  res = CHR_getStringIndexOf(dstPtr,/*idx=*/0, /*maxlen=*/20, wrk);
+  if (res == false) {
+    return false;
+  }
+  strcpy(dstPtr, wrk);
   
-  Serial.println(F("3c:"));
   return true;
 }
  
