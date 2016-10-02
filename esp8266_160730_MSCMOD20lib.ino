@@ -130,6 +130,8 @@ void receiveDummy(int rcvlen)
   }
 }
 
+//--------------------------------------------------------------
+// character tools
 int CHR_getTerminatorCount(char *srcPtr) 
 {
   if (srcPtr == NULL) {
