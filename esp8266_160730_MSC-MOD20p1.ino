@@ -111,13 +111,34 @@ void Test_SDfreeSpace()
 
 void Test_SDtestReadWrite()
 {
+  // TODO: 2z> under construction
+
   static bool started = false;
   char rcvstr[50] = { 0 };
   if (started == false) {
-    MSCMOD_testWriteAndRead(rcvstr);
+    XXX_MSCMOD_testWriteAndRead(rcvstr);
     started = true;
   } else {
     
+  }
+}
+
+void Test_SDopenWriteClose()
+{
+  char filename[] = "TEST.TXT";
+  char rcvstr[50] = { 0 };
+
+  if (MSCMOD_OpenFile(filename, rcvstr)) {
+    Serial.println(rcvstr);
+  } else {
+    Serial.println(F("OpenFile: Fail"));
+  }
+  //
+  rcvstr[0] = 0x00;
+  if (MSCMOD_CloseFile(rcvstr)) {
+    Serial.println(rcvstr);
+  } else {
+    Serial.println(F("CloseFile: Fail"));    
   }
 }
 
@@ -125,9 +146,10 @@ void loop() {
   Test_SDversion();
 
   Test_SDInit(/*retry=*/0);
-  Test_SDfreeSpace();
+//  Test_SDfreeSpace();
 
-  Test_SDtestReadWrite();
+  Test_SDopenWriteClose();
+//  Test_SDtestReadWrite();
 
 //  char rcvstr[5] = { 0 };
 //  if (MSCMOD_CheckWithAck(rcvstr)) {
