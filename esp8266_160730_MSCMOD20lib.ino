@@ -1,5 +1,6 @@
 
 /*
+ *   - add MSCMOD_OpenFile()
  *   - add XXX_MSCMOD_testWriteAndRead()
  * v0.13 
  *   - MSDMOD_CheckFreeSpace() checks ACK
@@ -330,5 +331,38 @@ bool XXX_MSCMOD_testWriteAndRead(char *dstPtr)
 
   Serial.println(dstPtr);
 }
- 
+
+bool MSCMOD_OpenFile(char *fileName, char *dstPtr)
+{
+  // - Example of [return characters]
+  // !00<0x0A><0x00>
+
+//  char sndstr[] = { 'O', 0x20, '1', 'R', '>', 'M', ':', '0', kCode_terminate, 0x00 }; // `should end with 0x00 for strlen()
+
+  char sndstr[20];
+
+  strcpy(sndstr, "O 1R>M:\\");
+  strcat(sndstr, fileName);
+  strcat(sndstr, kCode_terminate);
+  strcat(sndstr, 0x00);
+
+#if 1 // debug
+  Serial.println(sndstr);
+#endif
+
+  int len = strlen(sndstr);
+
+  i2c_sendData(/*size=*/len, sndstr);
+
+  bool rcvd;
+
+  // 2. receive process time
+  rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
+  if (rcvd == false) {
+    return false;  
+  }
+
+  Serial.println(dstPtr);
+} 
+
 
