@@ -2,6 +2,7 @@
 #include "esp8266_160730_i2cWrapper.h"
 
 /* 
+ *   - MSCMOD20lib: v0.14 > add MSCMOD_OpenFile() and MSCMOD_CloseFile()
  *   - add Test_SDtestReadWrite()
  * v0.12 2016 OCt. 02
  *   - MSCMOD20lib: v0.13
