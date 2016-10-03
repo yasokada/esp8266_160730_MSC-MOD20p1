@@ -1,5 +1,7 @@
 
 /*
+ *   - MSCMOD_CloseFile() checks ACK
+ *   - MSCMOD_OpenFile() checks ACK
  *   - add MSCMOD_CloseFile()
  *   - add MSCMOD_OpenFile()
  *   - add XXX_MSCMOD_testWriteAndRead()
@@ -350,15 +352,12 @@ bool MSCMOD_OpenFile(char *fileName, char *dstPtr)
 
   i2c_sendData(/*size=*/len, sndstr);
 
-  bool rcvd;
-
-  // 2. receive process time
-  rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
+  // TODO: 0m > revisit timeout time
+  bool rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
   if (rcvd == false) {
-    return false;  
+    return false;
   }
-
-  return true;
+  return isAck(dstPtr);
 } 
 
 bool MSCMOD_CloseFile(char *dstPtr)
@@ -371,10 +370,10 @@ bool MSCMOD_CloseFile(char *dstPtr)
 
   i2c_sendData(/*size=*/len, sndstr);
 
-  bool rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/5000, dstPtr);
-  if (rcvd) {
-    return isAck(dstPtr);
-  } else {
+  // TODO: 0m > revisit timeout time
+  bool rcvd = readReply_delayAndTimeout(/* delay_msec=*/10, /* timeout_msec=*/1000, dstPtr);
+  if (rcvd == false) {
     return false;
   }
+  return isAck(dstPtr);
 }
