@@ -134,6 +134,7 @@ void Test_SDopenWriteClose()
     Serial.println(rcvstr);
   } else {
     Serial.println(F("OpenFile: Fail"));
+    Serial.println(rcvstr);
   }
   //
   rcvstr[0] = 0x00;
@@ -142,6 +143,7 @@ void Test_SDopenWriteClose()
     Serial.println(rcvstr);
   } else {
     Serial.println(F("CloseFile: Fail"));    
+    Serial.println(rcvstr);
   }
 }
 
