@@ -1,7 +1,10 @@
 #include <Wire.h>
 #include "esp8266_160730_i2cWrapper.h"
+#include "esp8266_161005_charLib.h"
 
 /* 
+ * v0.13 2016 OCt. 05
+ *   - include [esp8266_161005_charLib.h]
  *   - MSCMOD20lib: v0.14 > add MSCMOD_OpenFile() and MSCMOD_CloseFile()
  *   - add Test_SDtestReadWrite()
  * v0.12 2016 OCt. 02

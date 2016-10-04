@@ -1,5 +1,6 @@
 
 /*
+ *   - add MSCMOD_WriteText()
  * v0.14
  *   - MSCMOD_CloseFile() checks ACK
  *   - MSCMOD_OpenFile() checks ACK
@@ -377,4 +378,9 @@ bool MSCMOD_CloseFile(char *dstPtr)
     return false;
   }
   return isAck(dstPtr);
+}
+
+bool MSCMOD_WriteText(char *srcPtr, char *dstPtr)
+{
+  
 }
